@@ -1,0 +1,19 @@
+﻿# Flutter
+**/build/
+**/.dart_tool/
+**/ios/Flutter/Flutter.podspec
+**/ios/Pods/
+**/android/.gradle/
+**/android/app/build/
+pubspec.lock
+
+# Python / FastAPI
+backend/.venv/
+backend/__pycache__/
+**/*.py[cod]
+requirements.txt
+
+# IDE
+.vscode/
+.idea/
+*.iml
