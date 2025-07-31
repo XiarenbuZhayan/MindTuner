@@ -2,6 +2,9 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+
+from services.gpt_service import generate_meditation_script
+
 medi = APIRouter()
 
 class MeditationRequest(BaseModel):
@@ -15,11 +18,15 @@ class MeditationResponse(BaseModel):
 
 
 @medi.post("/generate")
-def generate_meditation_scripts(data:MeditationRequest):
-    pass
+def generate_meditation(request:MeditationRequest):
+    try:
+        script = generate_meditation_script(request.mood, request.context)
+        return {"script": script}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @medi.post("/regenerate")
-def regenerate_meditation_scripts(data:MeditationRequest):
+def regenerate_meditation(data:MeditationRequest):
     pass
 
 @medi.post("/tts")
