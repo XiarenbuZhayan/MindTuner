@@ -8,9 +8,10 @@
 pubspec.lock
 
 # Python / FastAPI
+__pycache__/
 backend/.venv/
-backend/__pycache__/
-backend/config/mindtuner-8804e-firebase-adminsdk-fbsvc-799e768d31.json
+backend/app/config/mindtuner-8804e-firebase-adminsdk-fbsvc-8e25d7ced2.json
+backend/app/config/config.py
 **/*.py[cod]
 requirements.txt
 
