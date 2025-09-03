@@ -1,8 +1,0 @@
-<!-- 发布到 Play 商店前，请把它限制成只对开发服务器放行，或在 AndroidManifest.xml 中改用 HTTPS 并删掉这段配置。 -->
-
-<network-security-config>
-
-    <!-- 允许应用向任意域名发起 HTTP 请求，开发阶段使用 -->
-    <base-config cleartextTrafficPermitted="true" />
-
-</network-security-config>

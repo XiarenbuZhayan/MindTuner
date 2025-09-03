@@ -1,21 +1,47 @@
-﻿# Flutter
-**/build/
-**/.dart_tool/
-**/ios/Flutter/Flutter.podspec
-**/ios/Pods/
-**/android/.gradle/
-**/android/app/build/
-pubspec.lock
+﻿# 通用
+.DS_Store
+*.log
+*.tmp
+*.swp
 
-# Python / FastAPI
-backend/.venv/
+# Python/后端
 __pycache__/
-/backend/app/config/mindtuner-8804e-firebase-adminsdk-fbsvc-8e25d7ced2.json
-/backend/app/config/config.py
-**/*.py[cod]
-requirements.txt
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.env.* 
+.pytest_cache/
 
-# IDE
-.vscode/
+# 后端敏感配置（用模板替代）
+backend/app/config/*.json
+!backend/app/config/*.example.json
+backend/app/config/config.py
+backend/app/config/config_simple.py
+
+# Flutter/前端
+frontend/build/
+frontend/.dart_tool/
+frontend/.flutter-plugins-dependencies
+
+# Android
+frontend/android/.gradle/
+frontend/android/build/
+frontend/android/local.properties
+frontend/android/app/google-services.json
+
+# iOS
+frontend/ios/Flutter/ephemeral/
+frontend/ios/Pods/
+frontend/ios/Runner.xcworkspace/
+# 若你决定不提交 workspace，可忽略之；如团队习惯提交则去掉这行
+
+# IDE/编辑器
 .idea/
+.vscode/
 *.iml
+frontend/frontend.iml
+frontend/ios/Runner/GoogleService-Info.plist
+frontend/.metadata
