@@ -53,11 +53,13 @@ class MeditationApi {
   static String get baseUrl {
     // For real device testing, replace with your computer's LAN IP address
     // Example: 'http://192.168.1.100:8080'
-    const String serverIP = '192.168.0.111'; // Please replace with your actual IP address
-    
-    if (Platform.isAndroid) return 'http://$serverIP:8080'; // Android real device
-    if (Platform.isIOS) return 'http://$serverIP:8080';     // iOS real device
-    return 'http://localhost:8080';      
+    const String serverIP =
+        '192.168.0.102'; // Please replace with your actual IP address
+
+    if (Platform.isAndroid)
+      return 'http://$serverIP:8080'; // Android real device
+    if (Platform.isIOS) return 'http://$serverIP:8080'; // iOS real device
+    return 'http://localhost:8080';
   }
 
   // Test backend connection
@@ -66,7 +68,7 @@ class MeditationApi {
     try {
       print('🔍 测试后端连接: $url');
       final res = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       return {
         'success': res.statusCode == 200,
         'statusCode': res.statusCode,
@@ -92,34 +94,38 @@ class MeditationApi {
     try {
       print('🎯 发送请求到: $url');
       print('📝 请求数据: userId=$userId, mood=$mood');
-      
+
       // 获取优化后的参数
-      final optimizedParams = await FeedbackOptimizationService.getOptimizedParameters(
+      final optimizedParams =
+          await FeedbackOptimizationService.getOptimizedParameters(
         mood: mood,
         description: description,
       );
-      
+
       print('🎯 优化参数: $optimizedParams');
-      
-      final res = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'user_id': userId,
-          'mood': mood,
-          'description': description,
-          'target_duration': optimizedParams['targetDuration'],
-          'length_adjustment': optimizedParams['lengthAdjustment'],
-          'preferred_style': optimizedParams['preferredStyle'],
-          'preferred_focus': optimizedParams['preferredFocus'],
-          if (optimizedParams.containsKey('improvement_suggestions'))
-            'improvement_suggestions': optimizedParams['improvement_suggestions'],
-        }),
-      ).timeout(const Duration(seconds: 60));
-      
+
+      final res = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'user_id': userId,
+              'mood': mood,
+              'description': description,
+              'target_duration': optimizedParams['targetDuration'],
+              'length_adjustment': optimizedParams['lengthAdjustment'],
+              'preferred_style': optimizedParams['preferredStyle'],
+              'preferred_focus': optimizedParams['preferredFocus'],
+              if (optimizedParams.containsKey('improvement_suggestions'))
+                'improvement_suggestions':
+                    optimizedParams['improvement_suggestions'],
+            }),
+          )
+          .timeout(const Duration(seconds: 60));
+
       print('📊 响应状态码: ${res.statusCode}');
       print('📄 响应内容: ${res.body}');
-      
+
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         return GenerateResult(
@@ -128,10 +134,12 @@ class MeditationApi {
           audioUrl: data['audio_url'] as String?,
         );
       } else {
-        throw Exception('generate meditation failed: ${res.statusCode} ${res.body}');
+        throw Exception(
+            'generate meditation failed: ${res.statusCode} ${res.body}');
       }
     } on TimeoutException {
-      throw Exception('request timeout, please check if the backend is reachable or try again later');
+      throw Exception(
+          'request timeout, please check if the backend is reachable or try again later');
     } catch (e) {
       print('❌ 请求异常: $e');
       throw Exception('网络错误: $e');
@@ -147,14 +155,16 @@ class MeditationApi {
     final url = Uri.parse('$baseUrl/history/$targetUserId?limit=$limit');
     try {
       print('📚 获取用户冥想历史记录: $url');
-      
+
       final res = await http.get(url).timeout(const Duration(seconds: 30));
-      
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         final List<dynamic> data = jsonDecode(res.body) as List<dynamic>;
-        return data.map((json) => MeditationHistoryItem.fromJson(json)).toList();
+        return data
+            .map((json) => MeditationHistoryItem.fromJson(json))
+            .toList();
       } else {
         throw Exception('获取历史记录失败: ${res.statusCode} ${res.body}');
       }
@@ -167,30 +177,33 @@ class MeditationApi {
   }
 
   // 按日期分组获取用户冥想历史记录
-  static Future<Map<String, List<MeditationHistoryItem>>> getUserMeditationHistoryGrouped({
+  static Future<Map<String, List<MeditationHistoryItem>>>
+      getUserMeditationHistoryGrouped({
     String? userId,
     int limit = 50,
   }) async {
     final targetUserId = userId ?? 'test-user';
-    final url = Uri.parse('$baseUrl/history/$targetUserId/grouped?limit=$limit');
+    final url =
+        Uri.parse('$baseUrl/history/$targetUserId/grouped?limit=$limit');
     try {
       print('📅 按日期分组获取用户冥想历史记录: $url');
-      
+
       final res = await http.get(url).timeout(const Duration(seconds: 30));
-      
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(res.body) as Map<String, dynamic>;
+        final Map<String, dynamic> data =
+            jsonDecode(res.body) as Map<String, dynamic>;
         final Map<String, List<MeditationHistoryItem>> groupedRecords = {};
-        
+
         data.forEach((dateStr, recordsList) {
           final List<dynamic> records = recordsList as List<dynamic>;
           groupedRecords[dateStr] = records
               .map((json) => MeditationHistoryItem.fromJson(json))
               .toList();
         });
-        
+
         return groupedRecords;
       } else {
         throw Exception('获取分组历史记录失败: ${res.statusCode} ${res.body}');
@@ -210,13 +223,14 @@ class MeditationApi {
     final url = Uri.parse('$baseUrl/history/record/$recordId');
     try {
       print('📖 获取冥想记录详情: $url');
-      
+
       final res = await http.get(url).timeout(const Duration(seconds: 30));
-      
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(res.body) as Map<String, dynamic>;
+        final Map<String, dynamic> data =
+            jsonDecode(res.body) as Map<String, dynamic>;
         return MeditationHistoryItem.fromJson(data);
       } else if (res.statusCode == 404) {
         throw Exception('记录不存在');
@@ -240,20 +254,22 @@ class MeditationApi {
     final url = Uri.parse('$baseUrl/history/record/$recordId/feedback');
     try {
       print('⭐ 更新冥想记录评价: $url');
-      
+
       final Map<String, dynamic> body = {'score': score};
       if (feedback != null) {
         body['feedback'] = feedback;
       }
-      
-      final res = await http.put(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 30));
-      
+
+      final res = await http
+          .put(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 30));
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         return true;
       } else {
@@ -274,11 +290,11 @@ class MeditationApi {
     final url = Uri.parse('$baseUrl/history/record/$recordId');
     try {
       print('🗑️ 删除冥想记录: $url');
-      
+
       final res = await http.delete(url).timeout(const Duration(seconds: 30));
-      
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         return true;
       } else {

@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 /// 评分类型枚举
 enum RatingType {
   meditation, // 冥想评分
-  mood,       // 心情评分
-  general     // 通用评分
+  mood, // 心情评分
+  general // 通用评分
 }
 
 /// 评分记录模型
@@ -98,14 +98,14 @@ class RatingStatistics {
 /// 评分服务类
 class RatingService {
   static String get baseUrl {
-    // 真机测试时，需要替换为您的电脑局域网IP地址
     // 例如：'http://192.168.1.100:8080'
-    const String serverIP = '192.168.0.111'; // 请替换为您的实际IP地址
-    
+    const String serverIP = '192.168.0.102';
+
     if (Platform.isAndroid) return 'http://$serverIP:8080'; // Android真机
-    if (Platform.isIOS) return 'http://$serverIP:8080';     // iOS真机
-    return 'http://localhost:8080';      
+    if (Platform.isIOS) return 'http://$serverIP:8080'; // iOS真机
+    return 'http://localhost:8080';
   }
+
   static const String apiPath = '/rating';
 
   /// 创建评分
@@ -123,10 +123,10 @@ class RatingService {
         'score': score,
         'comment': comment,
       };
-      
+
       print('🌐 发送评分请求到: $url');
       print('📝 请求数据: $requestBody');
-      
+
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -143,7 +143,7 @@ class RatingService {
       }
     } catch (e) {
       print('❌ 网络请求异常: $e');
-      if (e.toString().contains('Connection refused') || 
+      if (e.toString().contains('Connection refused') ||
           e.toString().contains('Failed host lookup') ||
           e.toString().contains('No route to host')) {
         throw Exception('无法连接到服务器，请检查网络连接或服务器是否启动');
@@ -162,13 +162,14 @@ class RatingService {
       final queryParams = <String, String>{
         'limit': limit.toString(),
       };
-      
+
       if (ratingType != null) {
         queryParams['rating_type'] = ratingType.toString().split('.').last;
       }
 
-      final uri = Uri.parse('$baseUrl$apiPath/user/$userId').replace(queryParameters: queryParams);
-      
+      final uri = Uri.parse('$baseUrl$apiPath/user/$userId')
+          .replace(queryParameters: queryParams);
+
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
@@ -226,7 +227,8 @@ class RatingService {
   /// 删除评分记录
   static Future<void> deleteRating(String ratingId) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl$apiPath/$ratingId'));
+      final response =
+          await http.delete(Uri.parse('$baseUrl$apiPath/$ratingId'));
 
       if (response.statusCode != 200) {
         throw Exception('删除评分失败: ${response.statusCode} - ${response.body}');
@@ -246,13 +248,14 @@ class RatingService {
       final queryParams = <String, String>{
         'days': days.toString(),
       };
-      
+
       if (ratingType != null) {
         queryParams['rating_type'] = ratingType.toString().split('.').last;
       }
 
-      final uri = Uri.parse('$baseUrl$apiPath/user/$userId/statistics').replace(queryParameters: queryParams);
-      
+      final uri = Uri.parse('$baseUrl$apiPath/user/$userId/statistics')
+          .replace(queryParameters: queryParams);
+
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
@@ -271,19 +274,21 @@ class RatingService {
   }) async {
     try {
       final queryParams = <String, String>{};
-      
+
       if (ratingType != null) {
         queryParams['rating_type'] = ratingType.toString().split('.').last;
       }
 
-      final uri = Uri.parse('$baseUrl$apiPath/statistics/all').replace(queryParameters: queryParams);
-      
+      final uri = Uri.parse('$baseUrl$apiPath/statistics/all')
+          .replace(queryParameters: queryParams);
+
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         return RatingStatistics.fromJson(jsonDecode(response.body));
       } else {
-        throw Exception('获取所有评分统计失败: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            '获取所有评分统计失败: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       throw Exception('网络错误: $e');
@@ -291,7 +296,8 @@ class RatingService {
   }
 
   /// 批量创建评分
-  static Future<List<RatingRecord>> createBatchRatings(List<Map<String, dynamic>> ratings) async {
+  static Future<List<RatingRecord>> createBatchRatings(
+      List<Map<String, dynamic>> ratings) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl$apiPath/batch'),
@@ -317,7 +323,7 @@ class RatingService {
       final response = await http.get(Uri.parse('$baseUrl$apiPath/health'));
 
       print('🏥 健康检查响应: ${response.statusCode} - ${response.body}');
-      
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {

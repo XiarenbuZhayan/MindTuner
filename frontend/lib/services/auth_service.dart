@@ -19,8 +19,8 @@ class AuthService {
 
   // Get baseUrl
   static String get baseUrl {
-    const String serverIP = '192.168.0.111'; // Please replace with your actual IP address
-    
+    const String serverIP = '192.168.0.102';
+
     if (Platform.isAndroid) return 'http://$serverIP:8080';
     if (Platform.isIOS) return 'http://$serverIP:8080';
     return 'http://localhost:8080';
@@ -35,19 +35,21 @@ class AuthService {
     final url = Uri.parse('${AuthService.baseUrl}/user/register');
     try {
       print('📝 用户注册: $url');
-      
-      final res = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-          'display_name': displayName,
-        }),
-      ).timeout(const Duration(seconds: 30));
-      
+
+      final res = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email': email,
+              'password': password,
+              'display_name': displayName,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         return {
@@ -86,25 +88,27 @@ class AuthService {
     final url = Uri.parse('${AuthService.baseUrl}/user/login');
     try {
       print('🔐 用户登录: $url');
-      
-      final res = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-      ).timeout(const Duration(seconds: 30));
-      
+
+      final res = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email': email,
+              'password': password,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
-        
+
         // 后端登录成功，直接返回结果
         // 不再调用 Firebase Auth 登录，避免 reCAPTCHA 问题
         print('✅ 后端登录成功，跳过 Firebase Auth 登录');
-        
+
         return {
           'success': true,
           'uid': data['uid'],
@@ -138,11 +142,11 @@ class AuthService {
     final url = Uri.parse('${AuthService.baseUrl}/user/user/$uid');
     try {
       print('👤 获取用户信息: $url');
-      
+
       final res = await http.get(url).timeout(const Duration(seconds: 30));
-      
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         return {
@@ -175,11 +179,11 @@ class AuthService {
     final url = Uri.parse('${AuthService.baseUrl}/user/user/$uid');
     try {
       print('🗑️ 删除用户: $url');
-      
+
       final res = await http.delete(url).timeout(const Duration(seconds: 30));
-      
+
       print('📊 响应状态码: ${res.statusCode}');
-      
+
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
         return {
@@ -276,10 +280,8 @@ class AuthService {
         });
 
         // 获取用户数据
-        DocumentSnapshot doc = await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        DocumentSnapshot doc =
+            await _firestore.collection('users').doc(user.uid).get();
 
         if (doc.exists) {
           return UserModel.fromJson(doc.data() as Map<String, dynamic>);
@@ -329,10 +331,7 @@ class AuthService {
         if (photoURL != null) updates['photoURL'] = photoURL;
 
         if (updates.isNotEmpty) {
-          await _firestore
-              .collection('users')
-              .doc(user.uid)
-              .update(updates);
+          await _firestore.collection('users').doc(user.uid).update(updates);
         }
       }
     } catch (e) {
@@ -344,10 +343,8 @@ class AuthService {
   // 获取用户数据
   Future<UserModel?> getUserData(String uid) async {
     try {
-      DocumentSnapshot doc = await _firestore
-          .collection('users')
-          .doc(uid)
-          .get();
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(uid).get();
 
       if (doc.exists) {
         return UserModel.fromJson(doc.data() as Map<String, dynamic>);
@@ -365,7 +362,7 @@ class AuthService {
     try {
       print('🔍 测试后端连接: $url');
       final res = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       return {
         'success': res.statusCode == 200,
         'statusCode': res.statusCode,
@@ -392,4 +389,4 @@ class AuthService {
 
   // 获取当前用户显示名称
   String? get currentUserDisplayName => _auth.currentUser?.displayName;
-} 
+}

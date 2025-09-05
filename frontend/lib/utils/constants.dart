@@ -38,5 +38,5 @@ class AppSizes {
 }
 
 class AppConstants {
-  static const String apiBaseUrl = 'http://192.168.0.111:8080';
-} 
+  static const String apiBaseUrl = 'http://192.168.0.102:8080';
+}

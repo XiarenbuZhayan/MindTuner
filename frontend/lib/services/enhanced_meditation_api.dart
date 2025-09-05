@@ -6,11 +6,13 @@ class EnhancedMeditationApi {
   static String get baseUrl {
     // For real device testing, replace with your computer's LAN IP address
     // Example: 'http://192.168.1.100:8080'
-    const String serverIP = '192.168.0.111'; // Please replace with your actual IP address
-    
-    if (Platform.isAndroid) return 'http://$serverIP:8080'; // Android real device
-    if (Platform.isIOS) return 'http://$serverIP:8080';     // iOS real device
-    return 'http://localhost:8080';      
+    const String serverIP =
+        '192.168.0.102'; // Please replace with your actual IP address
+
+    if (Platform.isAndroid)
+      return 'http://$serverIP:8080'; // Android real device
+    if (Platform.isIOS) return 'http://$serverIP:8080'; // iOS real device
+    return 'http://localhost:8080';
   }
 
   /// Generate enhanced meditation content based on user feedback
@@ -35,7 +37,8 @@ class EnhancedMeditationApi {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        throw Exception('Failed to generate enhanced meditation: ${response.statusCode}');
+        throw Exception(
+            'Failed to generate enhanced meditation: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Network request failed: $e');
@@ -43,10 +46,12 @@ class EnhancedMeditationApi {
   }
 
   /// Get user feedback analysis results
-  static Future<Map<String, dynamic>> getUserFeedbackAnalysis(String userId) async {
+  static Future<Map<String, dynamic>> getUserFeedbackAnalysis(
+      String userId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/enhanced-meditation/user/$userId/feedback-analysis'),
+        Uri.parse(
+            '$baseUrl/enhanced-meditation/user/$userId/feedback-analysis'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -55,7 +60,8 @@ class EnhancedMeditationApi {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        throw Exception('Failed to get feedback analysis: ${response.statusCode}');
+        throw Exception(
+            'Failed to get feedback analysis: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Network request failed: $e');
@@ -69,7 +75,8 @@ class EnhancedMeditationApi {
   }) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/enhanced-meditation/user/$userId/feedback-history?limit=$limit'),
+        Uri.parse(
+            '$baseUrl/enhanced-meditation/user/$userId/feedback-history?limit=$limit'),
         headers: {
           'Content-Type': 'application/json',
         },

@@ -1,7 +1,7 @@
 import os
 
-os.environ.setdefault("HTTP_PROXY", "http://192.168.0.111:10809")
-os.environ.setdefault("HTTPS_PROXY", "http://192.168.0.111:10809")
+os.environ.setdefault("HTTP_PROXY", "http://192.168.0.102:7897")
+os.environ.setdefault("HTTPS_PROXY", "http://192.168.0.102:7897")
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
